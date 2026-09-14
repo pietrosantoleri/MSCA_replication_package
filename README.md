@@ -18,7 +18,7 @@ do run_all.do
 
 The package was tested with StataNow/SE 19.5 on macOS. Allow approximately nine minutes, depending on your machine. Required Stata commands are bundled in `stata_packages/`.
 
-`run_all.do` runs scripts 00–06 in order: generate pseudo-data, prepare analysis inputs, estimate the main-text results and export figures and tables. Scripts 00 and 01 create `msca_pseudo.dta`, `msca_analysis_pseudo.dta` and `citations_pseudo.dta` under `data/pseudo/`. Each run replaces generated inputs and outputs. Successful completion is marked by `MAIN-TEXT PACKAGE COMPLETE` in `logs/run_all.log`. Generated datasets and logs are created locally and excluded from Git.
+`run_all.do` runs scripts 00–06 in order: generate pseudo-data, prepare analysis inputs, estimate the main-text results and export figures and tables. Scripts 00 and 01 create `msca_pseudo.dta`, `msca_analysis_pseudo.dta` and `citations_pseudo.dta` under `data/pseudo/`.
 
 ## Main-text outputs
 
