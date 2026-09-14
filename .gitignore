@@ -1,0 +1,14 @@
+# Generated synthetic input datasets: recreated by run_all.do
+/data/**/*.dta
+# Local run logs and temporary files
+/logs/
+.DS_Store
+*.aux
+*.out
+*.log
+*.synctex.gz
+# Local visual check; not part of the public release
+/preview.tex
+/output/preview.pdf
+# Binary duplicates of the readable estimate CSV files
+/output/source_data/*.dta

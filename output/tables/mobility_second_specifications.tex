@@ -1,0 +1,33 @@
+% Second specification for each outcome in original Tables 4 and 5.
+% Ready for \input{tables/mobility_second_specifications.tex} in main.tex.
+\begin{table*}[!t]
+\centering
+\begin{minipage}{0.90\textwidth}
+\caption{Effects of fellowship receipt on mobility within five years}
+\label{tab:mobility_second_specifications}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcccc@{}}
+\toprule
+& (1) & (2) & (3) & (4) \\
+& \shortstack{Intended\\country} & \shortstack{Intended country\\(CV-adjusted)} & \shortstack{Intended host\\institution} & \shortstack{Third\\countries} \\
+\midrule
+Fellowship effect & 0.314 & 0.261 & 0.408 & 0.052 \\
+SE & (0.060) & (0.057) & (0.061) & (0.069) \\
+\midrule
+Robust $p$ value & $<0.001$ & $<0.001$ & $<0.001$ & 0.439 \\
+Untreated mean & 0.61 & 0.64 & 0.51 & 0.31 \\
+Bandwidth & 2.9 & 3.0 & 2.9 & 3.4 \\
+\textit{N} below cutoff & 3,463 & 3,487 & 3,383 & 4,025 \\
+\textit{N} above cutoff & 2,959 & 2,978 & 2,913 & 3,332 \\
+\textit{N} & 40,985 & 40,985 & 40,985 & 40,985 \\
+\bottomrule
+\end{tabular*}
+\par\smallskip
+\begin{minipage}{\linewidth}
+\scriptsize
+\textit{Notes:} Each column reports a fuzzy regression-discontinuity estimate with competition fixed effects and the corresponding pre-competition outcome. All dependent variables measure affiliation at any point during the five years following the competition. Column 1 uses publication affiliation in the intended country; column 2 supplements this measure with CV information near the cutoff. Column 3 measures publication affiliation with the intended host institution. Column 4 measures affiliation with a country other than both the origin and intended destination. All specifications use local linear regressions on each side of the cutoff, triangular kernels and mean-squared-error-optimal bandwidths. Standard errors are clustered by competition. The untreated mean is calculated within the selected bandwidth.
+\end{minipage}
+\end{minipage}
+\end{table*}

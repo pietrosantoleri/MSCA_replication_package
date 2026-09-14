@@ -1,0 +1,33 @@
+% Second specification for each outcome in original Tables 4 and 5.
+% Ready for \input{tables/mobility_second_specifications.tex} in main.tex.
+\begin{table*}[!t]
+\centering
+\begin{minipage}{0.90\textwidth}
+\caption{Effects of fellowship receipt on mobility within five years}
+\label{tab:mobility_second_specifications}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcccc@{}}
+\toprule
+& (1) & (2) & (3) & (4) \\
+& \shortstack{Intended\\country} & \shortstack{Intended country\\(CV-adjusted)} & \shortstack{Intended host\\institution} & \shortstack{Third\\countries} \\
+\midrule
+Fellowship effect & @@tau1@@ & @@tau2@@ & @@tau3@@ & @@tau4@@ \\
+SE & @@se_cl1@@ & @@se_cl2@@ & @@se_cl3@@ & @@se_cl4@@ \\
+\midrule
+Robust $p$ value & @@p_rb1@@ & @@p_rb2@@ & @@p_rb3@@ & @@p_rb4@@ \\
+Untreated mean & @@Mean1@@ & @@Mean2@@ & @@Mean3@@ & @@Mean4@@ \\
+Bandwidth & @@h_r1@@ & @@h_r2@@ & @@h_r3@@ & @@h_r4@@ \\
+\textit{N} below cutoff & @@N_l1@@ & @@N_l2@@ & @@N_l3@@ & @@N_l4@@ \\
+\textit{N} above cutoff & @@N_r1@@ & @@N_r2@@ & @@N_r3@@ & @@N_r4@@ \\
+\textit{N} & @@N1@@ & @@N2@@ & @@N3@@ & @@N4@@ \\
+\bottomrule
+\end{tabular*}
+\par\smallskip
+\begin{minipage}{\linewidth}
+\scriptsize
+\textit{Notes:} Each column reports a fuzzy regression-discontinuity estimate with competition fixed effects and the corresponding pre-competition outcome. All dependent variables measure affiliation at any point during the five years following the competition. Column 1 uses publication affiliation in the intended country; column 2 supplements this measure with CV information near the cutoff. Column 3 measures publication affiliation with the intended host institution. Column 4 measures affiliation with a country other than both the origin and intended destination. All specifications use local linear regressions on each side of the cutoff, triangular kernels and mean-squared-error-optimal bandwidths. Standard errors are clustered by competition. The untreated mean is calculated within the selected bandwidth.
+\end{minipage}
+\end{minipage}
+\end{table*}

@@ -1,0 +1,30 @@
+variable	storage_type	label
+age	double	Age
+fwci_pre	double	
+prop_id	long	Artificial application identifier
+comp	int	Artificial competition identifier
+year_comp	int	Artificial application/call year
+margin2	double	Artificial competition-centered running variable
+treat	byte	Artificial eventual fellowship receipt
+sex	byte	Female
+prof	byte	Professor
+nat_eu27	byte	EU27 national
+globalrank	double	Host Scimago Ranking
+gdppc	double	Host country GDP per capita
+main_pre	int	Pubs (pre)
+main_post	byte	
+main_jif_pre	double	Average JIF (pre)
+main_jif_post	double	
+fwci_post	double	
+coauths_count_pre	int	
+coauths_count_post	int	
+d_pubs_dest_pre	byte	Intended-country affiliation (pre)
+d_pubs_dest_post	byte	Artificial intended-country affiliation within 5 years
+mob_linkedin_post	byte	Artificial CV-adjusted intended-country affiliation
+d_pubs_in_dest_aff_pre	byte	
+d_pubs_in_dest_aff_post_5	byte	Artificial intended-host affiliation within 5 years
+d_pubs_outside_both_5	byte	Artificial mobility to other country within 5 years
+mob_linkedin_pre	byte	
+d_pubs_outside_both_pre	byte	
+researchercountryorigin	str2	
+organisationnutscountry	str2	
