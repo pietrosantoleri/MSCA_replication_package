@@ -32,7 +32,7 @@ All numerical results in the linked files are **synthetic examples**.
 | Figure 2: outcome heterogeneity | [05](scripts/05_figures2_3_heterogeneity.do) | [Figure 2](output/figures/heterogeneity_combined.pdf) |
 | Figure 3: certification | [05](scripts/05_figures2_3_heterogeneity.do) | [Figure 3](output/figures/certification_heterogeneity.pdf) |
 
-Script [06](scripts/06_export_submitted_tables.do) formats the estimates from scripts 03 and 04 using the submitted table templates. Full-precision [table](output/source_data/table_estimates.csv) and [figure](output/source_data/figure_estimates.csv) estimates are also included. `templates/figure*.tex` retain the submitted captions and figure layouts. Supplementary analyses are outside this package’s scope.
+Script [06](scripts/06_export_submitted_tables.do) formats the estimates from scripts 03 and 04 using the submitted table layouts included under `scripts/`. Full-precision [table](output/source_data/table_estimates.csv) and [figure](output/source_data/figure_estimates.csv) estimates are also included. Supplementary analyses are outside this package’s scope.
 
 ## Data and methods
 

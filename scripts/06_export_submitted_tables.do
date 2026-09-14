@@ -2,7 +2,7 @@
 * Manuscript items: Tables 1 and 2.
 * Purpose: insert estimates into submitted table layouts and notes.
 * Inputs: output/source_data/table_estimates.dta and
-*         templates/mobility_table.tex, templates/research_table.tex.
+*         scripts/mobility_table.tex, scripts/research_table.tex.
 * Outputs: output/tables/mobility_second_specifications.tex and
 *          output/tables/research_second_specifications.tex.
 *=============================================================================*
@@ -21,7 +21,7 @@ foreach table in 1 2 {
         local outcomes main_post main_jif_post fwci_post coauths_count_post
     }
     tempname input output
-    file open `input' using "templates/`stem'_table.tex", read text
+    file open `input' using "scripts/`stem'_table.tex", read text
     file open `output' using "output/tables/`stem'_second_specifications.tex", write text replace
     file read `input' line
     while r(eof) == 0 {

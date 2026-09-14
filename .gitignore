@@ -16,3 +16,6 @@
 # Local documentation and validation records
 /documentation/
 /validation/
+
+# Local figure wrappers and preview templates
+/templates/
