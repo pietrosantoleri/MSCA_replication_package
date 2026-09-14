@@ -2,7 +2,7 @@
 
 Stata replication package for the main text of the Nature Communications submission by **Stefano Baruffaldi, Pietro Santoleri and Yevgeniya Shevtsova**.
 
-**This package uses fully synthetic data.** It runs the analyses for the three main figures and two main tables using generated artificial records. Numerical results will differ from the paper and should not be interpreted as empirical findings. The estimation code closely follows the original workflow; figure styling and table titles, labels and notes follow the submission.
+**This package uses fully synthetic data.** It runs the analyses for the three main figures and two main tables using generated artificial records. Numerical results may differ from the paper.
 
 Contact: [Pietro Santoleri](mailto:pietro.santoleri@ec.europa.eu).
 
@@ -16,7 +16,7 @@ Contact: [Pietro Santoleri](mailto:pietro.santoleri@ec.europa.eu).
 do run_all.do
 ```
 
-The package was tested with StataNow/SE 19.5 on macOS. Allow approximately nine minutes, depending on your machine. Other operating systems have not been tested. Execution requires no internet connection, original research data, R or Python. Required Stata commands are bundled in `stata_packages/` at the original workflow's versions.
+The package was tested with StataNow/SE 19.5 on macOS. Allow approximately nine minutes, depending on your machine. Required Stata commands are bundled in `stata_packages/`.
 
 `run_all.do` runs scripts 00–06 in order: generate pseudo-data, prepare analysis inputs, estimate the main-text results and export figures and tables. Scripts 00 and 01 create `msca_pseudo.dta`, `msca_analysis_pseudo.dta` and `citations_pseudo.dta` under `data/pseudo/`. Each run replaces generated inputs and outputs. Successful completion is marked by `MAIN-TEXT PACKAGE COMPLETE` in `logs/run_all.log`. Generated datasets and logs are created locally and excluded from Git.
 
