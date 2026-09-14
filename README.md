@@ -1,6 +1,6 @@
 # Mobility grants induce international moves with uneven effects on scientific performance
 
-Stata replication package for the article ''Mobility grants induce international moves with uneven effects on scientific performance'' by **Stefano Baruffaldi, Pietro Santoleri and Yevgeniya Shevtsova**.
+Replication package for the article ''Mobility grants induce international moves with uneven effects on scientific performance'' by **Stefano Baruffaldi, Pietro Santoleri and Yevgeniya Shevtsova**.
 
 **This package uses fully synthetic data.** It runs the analyses for the three main figures and two main tables using generated artificial records. Numerical results may differ from the paper.
 
