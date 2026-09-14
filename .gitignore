@@ -12,3 +12,7 @@
 /output/preview.pdf
 # Binary duplicates of the readable estimate CSV files
 /output/source_data/*.dta
+
+# Local documentation and validation records
+/documentation/
+/validation/

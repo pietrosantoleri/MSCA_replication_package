@@ -34,13 +34,9 @@ All numerical results in the linked files are **synthetic examples**.
 
 Script [06](scripts/06_export_submitted_tables.do) formats the estimates from scripts 03 and 04 using the submitted table templates. Full-precision [table](output/source_data/table_estimates.csv) and [figure](output/source_data/figure_estimates.csv) estimates are also included. `templates/figure*.tex` retain the submitted captions and figure layouts. Supplementary analyses are outside this package’s scope.
 
-## Data, methods and validation
+## Data and methods
 
-- [Synthetic data and proxy definitions](documentation/SYNTHETIC_DATA.md): how artificial inputs map to the original variable names.
-- [Source map](documentation/SOURCE_MAP.md): manuscript elements and original estimation blocks.
-- [Variable dictionary](documentation/analysis_variables.tsv).
-- [Software dependencies](documentation/DEPENDENCIES.md).
-- [Release validation](validation/STATUS.md).
+Script 01 prepares synthetic analysis variables, CV-adjusted affiliation proxies, country codes and citation inputs. These artificial substitutes demonstrate the analysis and do not reconstruct the original measurement pipeline.
 
 The analysis begins at artificial application-level inputs. Administrative-data ingestion, author matching and bibliometric linkage are not reconstructed. The original empirical data are confidential. Independent access requires authorization from European Commission DG RTD Unit G.2, [RTD-G2-SUPPORT@ec.europa.eu](mailto:RTD-G2-SUPPORT@ec.europa.eu); access is at DG RTD’s discretion and is not controlled by the authors.
 
