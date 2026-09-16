@@ -9,7 +9,7 @@ Contact: [Pietro Santoleri](mailto:pietro.santoleri@ec.europa.eu).
 ## Run the package
 
 1. Download or clone this repository.
-2. Open licensed Stata 19 and set the working directory to the folder containing `run_all.do`.
+2. Open Stata 19 and set the working directory to the folder containing `run_all.do`.
 3. Enter the following command in Stata:
 
 ```stata
