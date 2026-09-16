@@ -51,7 +51,8 @@ foreach country of local eu28 {
     replace rev_origin = 1 if researchercountryorigin == "`country'"
     replace rev_host = 1 if organisationnutscountry == "`country'"
 }
-* Keep inherited groups: zero includes both-EU28 AND both-non-EU28.
+* Keep the inherited grouping used by the manuscript estimates: zero includes
+* both-EU28 AND both-non-EU28. The revised figures display this group as Intra-EU.
 gen byte rev_geography = rev_origin != rev_host if !missing(rev_origin, rev_host)
 tabulate rev_origin rev_host, missing
 
@@ -63,9 +64,9 @@ postfile `results' str20 outcome str8 scale str16 split byte cell horizon spec /
 *=============================================================================*
 * Figure 2, panels a-c: Estimate outcome heterogeneity
 *=============================================================================*
-* geography = panel a: Type of mobility.
+* geography = panel a: Direction of mobility.
 * quality   = panel b: Host-institution ranking.
-* joint     = panel c: Mobility type and host-institution ranking.
+* joint     = panel c: Direction of mobility and host-institution ranking.
 * Each split estimates publications, Average JIF, mobility and coauthors.
 foreach split in geography quality joint {
     local cells 2
@@ -102,7 +103,7 @@ foreach window in pre post post_10 {
 }
 * Figure 3 plots, left to right:
 * average: Average effects at five and ten years.
-* geography: Type of mobility; quality: Host quality; joint: Quality by mobility type.
+* geography: Direction of mobility; quality: Host quality; joint: Quality by direction of mobility.
 foreach horizon in 5 10 {
     local window post
     if `horizon' == 10 local window post_10
@@ -156,7 +157,7 @@ foreach split in geography quality joint {
     local row1 "Top-ranked"
     local row2 "Other ranked"
     if "`split'" == "geography" {
-        local row1 "Same-side"
+        local row1 "Intra-EU"
         local row2 "Extra-EU"
     }
     local plots
@@ -186,19 +187,19 @@ foreach split in geography quality joint {
         }
     }
     local legend "legend(off)"
-    if "`split'" == "joint" local legend `"legend(order(2 "Same-side" 4 "Extra-EU") position(6) rows(1) size(4.88573408754703125))"'
+    if "`split'" == "joint" local legend `"legend(order(2 "Intra-EU" 4 "Extra-EU") position(6) rows(1) size(4.88573408754703125))"'
     * Figure 2 panel titles: a = geography, b = quality, c = joint.
     if inlist("`split'", "geography", "quality", "joint") {
-        local panel "a  Type of mobility"
+        local panel "a  Direction of mobility"
         if "`split'" == "quality" local panel "b  Host-institution ranking"
-        if "`split'" == "joint" local panel "c  Mobility type and host-institution ranking"
+        if "`split'" == "joint" local panel "c  Direction of mobility and host-institution ranking"
         * Reverse only Panel A's display order, keeping labels and estimates paired.
         local panel_order
         if "`split'" == "geography" local panel_order "xscale(reverse)"
         * Reserve identical legend space in all rows. Invisible addplot keys
         * keep Panels A/B blank while matching Panel C's two-entry legend.
         local panel_legend `"`legend'"'
-        if "`split'" != "joint" local panel_legend `"legend(order(3 "Same-side" 4 "Extra-EU") color(white) position(6) rows(1) size(4.88573408754703125))"'
+        if "`split'" != "joint" local panel_legend `"legend(order(3 "Intra-EU" 4 "Extra-EU") color(white) position(6) rows(1) size(4.88573408754703125))"'
         coefplot `plots', `plot_design' ///
             byopts(yrescale rows(1) legend(position(6)) title("`panel'", size(5.862965331081796875) margin(b=2))) ///
             subtitle(, size(*1.6181654860546875)) ylabel(, axis(1) labsize(*1.15)) ///
@@ -254,11 +255,11 @@ foreach split in average geography quality joint {
     if "`split'" == "geography" {
         local row1 "Intra-EU"
         local row2 "Extra-EU"
-        local title "Type of mobility"
+        local title "Direction of mobility"
         local cert_order "xscale(reverse)"
     }
     if "`split'" == "joint" {
-        local title "Quality by mobility type"
+        local title "Quality by direction of mobility"
         local legend `"legend(order(2 "Intra-EU" 4 "Extra-EU") rows(1) size(5.7562942993605) position(6))"'
     }
     matrix B_cert = J(3, 2, .)
@@ -279,9 +280,11 @@ foreach split in average geography quality joint {
     if "`split'" == "joint" {
         local plots (matrix(B_cert[1,]), ci((B_cert[2,] B_cert[3,])) mcolor(stblue) ciopts(lcolor(stblue*.45) lwidth(1.083)) offset(.12)) (matrix(R_cert[1,]), ci((R_cert[2,] R_cert[3,])) mcolor(red) ciopts(lcolor(red*.45) lwidth(1.083)) offset(-.12)), bylabel(`title') ||
     }
+    local cert_title_size "*1.6181654860546875"
+    if "`split'" == "joint" local cert_title_size "*1.50"
     coefplot `plots', `cert_design' ///
         byopts(yrescale rows(1) legend(position(6))) ///
-        subtitle("`title'", size(*1.6181654860546875) box bcolor(gs15) lcolor(gs15) bexpand) ///
+        subtitle("`title'", size(`cert_title_size') box bcolor(gs15) lcolor(gs15) bexpand) ///
         ylabel(`lo' `mid' `hi', axis(1) format(%9.0fc) labsize(*1.15) labgap(`labelgap')) ///
         xlabel(1 "`row1'" 2 "`row2'", labsize(4.88573408754703125)) ///
         `legend' `cert_order' xsize(3) ysize(3.5) name(cert_`split', replace)
@@ -290,7 +293,7 @@ foreach split in average geography quality joint {
 *=============================================================================*
 * Figure 3: Combine and export the four plots
 *=============================================================================*
-* Order: Average effects, Type of mobility, Host quality, Quality by mobility type.
+* Order: Average effects, Direction of mobility, Host quality, Quality by direction of mobility.
 * Match Figure 2's box dimensions without scaling text, markers or CI lines.
 graph combine cert_average cert_geography cert_quality cert_joint, cols(4) altshrink ///
     xsize(12) ysize(3.5) imargin(l=5.28 r=5.28 t=0 b=0) graphregion(color(white))
