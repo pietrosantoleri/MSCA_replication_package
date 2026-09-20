@@ -38,6 +38,6 @@ Script [06](scripts/06_export_tables.do) inserts the estimates from scripts 03 a
 
 The original empirical data are confidential. Requests for independent access should be directed to European Commission DG RTD Unit G.2 at [RTD-G2-SUPPORT@ec.europa.eu](mailto:RTD-G2-SUPPORT@ec.europa.eu). Access requires DG RTD authorization and is not controlled by the authors.
 
-## Citation and licence
+## Citation
 
-Use [CITATION.cff](CITATION.cff) to cite this software package and cite the associated article alongside it. Project code, synthetic data and generated synthetic outputs are provided under the [MIT licence](LICENSE).
+Please cite the associated article when using this replication package.
