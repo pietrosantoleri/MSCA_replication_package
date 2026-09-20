@@ -17,5 +17,7 @@
 /documentation/
 /validation/
 
-# Local figure wrappers and preview templates
-/templates/
+# Local preview templates; retain the manuscript-matched Figure 2/3 notes
+/templates/*
+!/templates/figure2.tex
+!/templates/figure3.tex

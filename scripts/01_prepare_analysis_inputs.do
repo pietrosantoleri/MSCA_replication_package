@@ -77,6 +77,19 @@ preserve
     rename citations_pre main_citrec_pre
     rename cert_cites5 main_citrec_post
     rename cert_cites10 main_citrec_post_10
+    label data "SYNTHETIC MSCA citation input; not observed applicants"
+    label variable prop_id             "Artificial application identifier"
+    label variable main_citrec_pre     "Artificial citations to pre-existing work before competition"
+    label variable main_citrec_post    "Artificial citations to pre-existing work within 5 years"
+    label variable main_citrec_post_10 "Artificial citations to pre-existing work within 10 years"
+    order prop_id main_citrec_pre main_citrec_post main_citrec_post_10
+    foreach var of varlist _all {
+        local varlabel : variable label `var'
+        if `"`varlabel'"' == "" {
+            display as error "Variable `var' has no label."
+            exit 459
+        }
+    }
     isid prop_id
     assert main_citrec_post_10 >= main_citrec_post if !missing(main_citrec_post_10,main_citrec_post)
     save "data/pseudo/citations_pseudo.dta", replace
@@ -90,15 +103,52 @@ keep prop_id comp year_comp margin2 treat sex age prof nat_eu27 globalrank gdppc
     d_pubs_in_dest_aff_post_5 d_pubs_outside_both_pre d_pubs_outside_both_5 ///
     researchercountryorigin organisationnutscountry
 label data "SYNTHETIC MSCA main-text analysis input; not observed applicants"
-label var sex "Female"
-label var age "Age"
-label var prof "Professor"
-label var nat_eu27 "EU27 national"
-label var globalrank "Host Scimago Ranking"
-label var gdppc "Host country GDP per capita"
-label var d_pubs_dest_pre "Intended-country affiliation (pre)"
-label var main_pre "Pubs (pre)"
-label var main_jif_pre "Average JIF (pre)"
+label variable prop_id                    "Artificial application identifier"
+label variable comp                       "Artificial competition identifier"
+label variable year_comp                  "Artificial application/call year"
+label variable margin2                    "Artificial centered evaluation score"
+label variable treat                      "Artificial fellowship receipt"
+label variable sex                        "Artificial female indicator"
+label variable age                        "Artificial age at application"
+label variable prof                       "Artificial professor indicator"
+label variable nat_eu27                   "Artificial EU27 nationality indicator"
+label variable researchercountryorigin    "Artificial researcher origin country"
+label variable organisationnutscountry    "Artificial proposed-host country"
+label variable globalrank                 "Artificial host Scimago ranking"
+label variable gdppc                      "Artificial host-country GDP per capita"
+label variable d_pubs_dest_pre            "Artificial intended-country affiliation before competition"
+label variable d_pubs_dest_post           "Artificial intended-country affiliation within 5 years"
+label variable mob_linkedin_pre           "Artificial CV-adjusted affiliation before competition"
+label variable mob_linkedin_post          "Artificial CV-adjusted affiliation within 5 years"
+label variable d_pubs_in_dest_aff_pre     "Artificial intended-host affiliation before competition"
+label variable d_pubs_in_dest_aff_post_5  "Artificial intended-host affiliation within 5 years"
+label variable d_pubs_outside_both_pre    "Artificial other-country affiliation before competition"
+label variable d_pubs_outside_both_5      "Artificial other-country affiliation within 5 years"
+label variable main_pre                   "Artificial publication count before competition"
+label variable main_post                  "Artificial publication count within 5 years"
+label variable main_jif_pre               "Artificial average JIF before competition"
+label variable main_jif_post              "Artificial average JIF within 5 years"
+label variable fwci_pre                   "Artificial FWCI before competition"
+label variable fwci_post                  "Artificial FWCI within 5 years"
+label variable coauths_count_pre          "Artificial coauthor count before competition"
+label variable coauths_count_post         "Artificial coauthor count within 5 years"
+
+* Organize the final analysis file by design, context, and paired outcomes.
+order prop_id comp year_comp margin2 treat ///
+    sex age prof nat_eu27 ///
+    researchercountryorigin organisationnutscountry globalrank gdppc ///
+    d_pubs_dest_pre d_pubs_dest_post mob_linkedin_pre mob_linkedin_post ///
+    d_pubs_in_dest_aff_pre d_pubs_in_dest_aff_post_5 ///
+    d_pubs_outside_both_pre d_pubs_outside_both_5 ///
+    main_pre main_post main_jif_pre main_jif_post fwci_pre fwci_post ///
+    coauths_count_pre coauths_count_post
+foreach var of varlist _all {
+    local varlabel : variable label `var'
+    if `"`varlabel'"' == "" {
+        display as error "Variable `var' has no label."
+        exit 459
+    }
+}
 isid prop_id
 assert _N == 41024
 count if !missing(main_post)

@@ -62,7 +62,7 @@ global TAU_HOST         0.41
 global TAU_PUB          2.00
 global TAU_JIF          3.00
 global TAU_FWCI         0.50
-global TAU_COA          3.00
+global TAU_COA         -0.60
 
 
 ********************************************************************************
@@ -709,8 +709,22 @@ gen double mu_coa5_0 = exp( ///
     + 0.25*field_net ///
     + 0.08*comp_re )
 
-gen double _lambda_coa5 = mu_coa5_0 * rgamma(1.5,1/1.5)
+* Preserve the legacy RNG path for every outcome generated below this block.
+* First consume the original coauthor draws and record the resulting state.
+local rng_before_coauthors "`c(rngstate)'"
+gen double _lambda_coa5_legacy = mu_coa5_0 * rgamma(1.5,1/1.5)
+gen int coauthors5_0_legacy = rpoisson(_lambda_coa5_legacy)
+local rng_after_coauthors "`c(rngstate)'"
+
+* Generate revised coauthor counts from an isolated, reproducible stream.
+set rngstate `rng_before_coauthors'
+gen double _lambda_coa5 = mu_coa5_0 * rgamma(0.50,1/0.50)
 gen int coauthors5_0 = rpoisson(_lambda_coa5)
+
+* Resume the legacy stream before citations, ten-year outcomes, certification,
+* and missingness are generated.
+set rngstate `rng_after_coauthors'
+drop _lambda_coa5_legacy coauthors5_0_legacy
 
 gen double tau_coa_i = $TAU_COA ///
     + 12.0*(extra_eu - scalar(M_EXTRA)) ///
@@ -908,6 +922,64 @@ clonevar average_jif_5y       = jif5
 clonevar coauthors_5y         = coauthors5
 
 * Human-readable labels.
+label variable mobility_direction "Artificial mobility direction category"
+label variable origin_eu          "Artificial origin in EU28"
+label variable host_eu            "Artificial host in EU28"
+label variable european_resident  "Artificial European residence indicator"
+label variable eu27_resident      "Artificial EU27 residence indicator"
+label variable host_type          "Artificial host organization type"
+label variable host_hei           "Artificial higher-education host indicator"
+label variable host_research      "Artificial research-organization host indicator"
+label variable host_other         "Artificial other-host indicator"
+label variable proposal_duration  "Artificial proposal duration (months)"
+label variable host_rank          "Artificial host Scimago ranking"
+label variable top_host           "Artificial top-50 host indicator"
+label variable host_gdppc         "Artificial host-country GDP per capita"
+label variable distance_km        "Artificial origin-host distance (km)"
+label variable same_nat_host      "Artificial same-nationality-as-host indicator"
+label variable pubs_pre           "Artificial publication count before competition"
+label variable pubs_all_pre       "Artificial broad publication count before competition"
+label variable pubs_first_pre     "Artificial first-authored publications before competition"
+label variable pubs_last_pre      "Artificial last-authored publications before competition"
+label variable jif_pre            "Artificial average JIF before competition"
+label variable coauthors_pre      "Artificial coauthor count before competition"
+label variable fwci_pre           "Artificial FWCI before competition"
+label variable citations_pre      "Artificial citations before competition"
+label variable mobility_pre       "Artificial intended-country affiliation before competition"
+label variable host_aff_pre       "Artificial intended-host affiliation before competition"
+label variable rank_comp          "Artificial rank within competition"
+label variable cutoff_score       "Artificial competition funding cutoff"
+label variable new_aff5           "Artificial new-affiliation indicator within 5 years"
+label variable pubs5              "Artificial publication count within 5 years"
+label variable ln_pubs5           "Log(1 + artificial publications within 5 years)"
+label variable jif5               "Artificial average JIF within 5 years"
+label variable ln_jif5            "Log(1 + artificial average JIF within 5 years)"
+label variable fwci5              "Artificial FWCI within 5 years"
+label variable ln_fwci5           "Log(1 + artificial FWCI within 5 years)"
+label variable coauthors5         "Artificial coauthor count within 5 years"
+label variable ln_coauthors5      "Log(1 + artificial coauthors within 5 years)"
+label variable pubs_first5        "Artificial first-authored publications within 5 years"
+label variable pubs_all5          "Artificial broad publication count within 5 years"
+label variable citations5         "Artificial citations within 5 years"
+label variable ln_citations5      "Log(1 + artificial citations within 5 years)"
+label variable mobility10         "Artificial intended-country affiliation within 10 years"
+label variable mobility10_adj     "Artificial CV-adjusted affiliation within 10 years"
+label variable host_aff10         "Artificial intended-host affiliation within 10 years"
+label variable third_country10    "Artificial other-country affiliation within 10 years"
+label variable pubs10             "Artificial publication count within 10 years"
+label variable ln_pubs10          "Log(1 + artificial publications within 10 years)"
+label variable coauthors10        "Artificial coauthor count within 10 years"
+label variable ln_coauthors10     "Log(1 + artificial coauthors within 10 years)"
+label variable jif10              "Artificial average JIF within 10 years"
+label variable ln_jif10           "Log(1 + artificial average JIF within 10 years)"
+label variable fwci10             "Artificial FWCI within 10 years"
+label variable ln_fwci10          "Log(1 + artificial FWCI within 10 years)"
+label variable citations10        "Artificial citations within 10 years"
+label variable ln_citations10     "Log(1 + artificial citations within 10 years)"
+label variable pubs_first10       "Artificial first-authored publications within 10 years"
+label variable pubs_all10         "Artificial broad publication count within 10 years"
+label variable cert_cites5        "Artificial citations to pre-existing work within 5 years"
+label variable cert_cites10       "Artificial citations to pre-existing work within 10 years"
 label variable grant_received      "Synthetic fellowship receipt"
 label variable initial_offer       "Synthetic initial main-list placement"
 label variable aff_host_country_5y "Synthetic intended-country affiliation, 5 years"
@@ -930,9 +1002,38 @@ quietly count if _tag_comp
 assert r(N) == $NCOMP
 drop _tag_comp
 
+* Organize the comprehensive pseudo-data by concept and time horizon.
+order application_id researcher_id comp_id year action panel applied_before ///
+    female age doctor professor european_national eu27_national ///
+    european_resident eu27_resident ///
+    mobility_direction extra_eu same_side origin_eu host_eu origin_ctry host_ctry ///
+    host_type host_hei host_research host_other proposal_duration host_rank top_host ///
+    host_gdppc distance_km same_nat_host ///
+    pubs_pre pubs_all_pre pubs_first_pre pubs_last_pre jif_pre fwci_pre ///
+    citations_pre coauthors_pre mobility_pre host_aff_pre ///
+    evaluation_score rank_comp cutoff_score centered_score mainlist treated ///
+    mobility5 mobility5_adj host_aff5 third_country5 new_aff5 ///
+    pubs5 ln_pubs5 pubs_first5 pubs_all5 jif5 ln_jif5 fwci5 ln_fwci5 ///
+    citations5 ln_citations5 coauthors5 ln_coauthors5 ///
+    mobility10 mobility10_adj host_aff10 third_country10 ///
+    pubs10 ln_pubs10 pubs_first10 pubs_all10 jif10 ln_jif10 fwci10 ln_fwci10 ///
+    citations10 ln_citations10 coauthors10 ln_coauthors10 ///
+    cert_cites5 cert_cites10 ///
+    score_centered grant_received initial_offer aff_host_country_5y ///
+    aff_host_inst_5y publications_5y average_jif_5y coauthors_5y
+
 compress
 sort comp_id centered_score application_id
 
+* Fail if a future edit introduces an unlabeled release variable.
+foreach var of varlist _all {
+    local varlabel : variable label `var'
+    if `"`varlabel'"' == "" {
+        display as error "Variable `var' has no label."
+        exit 459
+    }
+}
+label data "SYNTHETIC MSCA pseudo-data; not observed applicants"
 save "data/pseudo/msca_pseudo.dta", replace
 
 assert pubs10 >= pubs5 if !missing(pubs10,pubs5)
