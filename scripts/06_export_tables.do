@@ -1,6 +1,6 @@
 *=============================================================================*
 * Manuscript items: Tables 1 and 2.
-* Purpose: insert estimates into submitted table layouts and notes.
+* Purpose: insert estimates into manuscript table layouts and notes.
 * Inputs: output/source_data/table_estimates.dta and
 *         scripts/mobility_table.tex, scripts/research_table.tex.
 * Outputs: output/tables/mobility_second_specifications.tex and
@@ -10,7 +10,7 @@
 version 19
 use "output/source_data/table_estimates.dta", clear
 *=============================================================================*
-* Tables 1 and 2: Export submitted layouts
+* Tables 1 and 2: Export manuscript layouts
 *=============================================================================*
 * table 1 = mobility; table 2 = scientific outcomes.
 foreach table in 1 2 {

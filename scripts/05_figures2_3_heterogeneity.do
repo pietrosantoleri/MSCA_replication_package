@@ -13,8 +13,8 @@ version 19
 *=============================================================================*
 * 1. Estimation and recording routines
 *=============================================================================*
-capture program drop revision_fit
-program define revision_fit, eclass
+capture program drop estimate_rd
+program define estimate_rd, eclass
     syntax varname [if], COVS(string)
     marksample touse
     quietly xi: rdrobust `varlist' margin2 if `touse', ///
@@ -26,8 +26,8 @@ program define revision_fit, eclass
     ereturn scalar Mean = r(mean)
 end
 
-capture program drop revision_record
-program define revision_record
+capture program drop record_rd_estimate
+program define record_rd_estimate
     args handle outcome scale split cell horizon spec
     post `handle' ("`outcome'") ("`scale'") ("`split'") (`cell') (`horizon') (`spec') ///
         (e(tau_cl)) (e(tau_bc)) (e(se_tau_cl)) (e(se_tau_rb)) (e(pv_rb)) ///
@@ -37,24 +37,24 @@ end
 
 
 *=========================================================================*
-* 2. Main analysis input and original subgroup definitions
+* 2. Main analysis input and subgroup definitions
 *=========================================================================*
 
 use "data/pseudo/msca_analysis_pseudo.dta", clear
 isid prop_id
-capture drop rev_quality rev_origin rev_host rev_geography
-gen byte rev_quality = globalrank <= 50 if !missing(globalrank)
-gen byte rev_origin = 0 if !missing(researchercountryorigin)
-gen byte rev_host = 0 if !missing(organisationnutscountry)
+capture drop group_quality origin_eu28 host_eu28 group_geography
+gen byte group_quality = globalrank <= 50 if !missing(globalrank)
+gen byte origin_eu28 = 0 if !missing(researchercountryorigin)
+gen byte host_eu28 = 0 if !missing(organisationnutscountry)
 local eu28 "AT BE BG HR CY CZ DK EE FI FR DE EL HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE UK"
 foreach country of local eu28 {
-    replace rev_origin = 1 if researchercountryorigin == "`country'"
-    replace rev_host = 1 if organisationnutscountry == "`country'"
+    replace origin_eu28 = 1 if researchercountryorigin == "`country'"
+    replace host_eu28 = 1 if organisationnutscountry == "`country'"
 }
-* Keep the inherited grouping used by the manuscript estimates: zero includes
-* both-EU28 AND both-non-EU28. The revised figures display this group as Intra-EU.
-gen byte rev_geography = rev_origin != rev_host if !missing(rev_origin, rev_host)
-tabulate rev_origin rev_host, missing
+* Use the manuscript geography grouping: zero includes
+* both-EU28 and both-non-EU28 records; the displayed label is Intra-EU.
+gen byte group_geography = origin_eu28 != host_eu28 if !missing(origin_eu28, host_eu28)
+tabulate origin_eu28 host_eu28, missing
 
 tempname results
 postfile `results' str20 outcome str8 scale str16 split byte cell horizon spec ///
@@ -73,17 +73,17 @@ foreach split in geography quality joint {
     if "`split'" == "joint" local cells 4
     forvalues cell = 1/`cells' {
         local group = `cell' - 1
-        if "`split'" == "geography" local condition "rev_geography == `group'"
-        if "`split'" == "quality" local condition "rev_quality == 1 - `group'"
+        if "`split'" == "geography" local condition "group_geography == `group'"
+        if "`split'" == "quality" local condition "group_quality == 1 - `group'"
         if "`split'" == "joint" {
             local quality = 1 - mod(`cell' - 1, 2)
             local subgroup = floor((`cell' - 1) / 2)
-            if "`split'" == "joint" local condition "rev_quality == `quality' & rev_geography == `subgroup'"
+            if "`split'" == "joint" local condition "group_quality == `quality' & group_geography == `subgroup'"
         }
         foreach stem in main main_jif d_pubs_dest coauths_count {
             display as text "MAIN: `stem', `split', cell `cell'"
-            revision_fit `stem'_post if `condition', covs(`stem'_pre i.comp)
-            revision_record `results' `stem' level `split' `cell' 5 2
+            estimate_rd `stem'_post if `condition', covs(`stem'_pre i.comp)
+            record_rd_estimate `results' `stem' level `split' `cell' 5 2
         }
     }
 }
@@ -92,7 +92,7 @@ foreach split in geography quality joint {
 * Figure 3: Estimate certification effects
 *=========================================================================*
 
-* Original citation merge and full-sample p99 winsorization.
+* Merge citation outcomes and apply full-sample p99 winsorization.
 merge 1:1 prop_id using "data/pseudo/citations_pseudo.dta", ///
     keep(master match) keepusing(main_citrec_pre main_citrec_post main_citrec_post_10) gen(merge_cert)
 assert merge_cert == 3
@@ -108,24 +108,24 @@ foreach horizon in 5 10 {
     local window post
     if `horizon' == 10 local window post_10
     display as text "CERT AVERAGE: level, `horizon' years, spec 2"
-    revision_fit main_citrec_`window', covs(main_citrec_pre i.comp)
-    revision_record `results' main_citrec level average 1 `horizon' 2
+    estimate_rd main_citrec_`window', covs(main_citrec_pre i.comp)
+    record_rd_estimate `results' main_citrec level average 1 `horizon' 2
     if `horizon' == 5 {
         foreach split in geography quality joint {
             local cells 2
             if "`split'" == "joint" local cells 4
             forvalues cell = 1/`cells' {
                 local group = `cell' - 1
-                if "`split'" == "geography" local condition "rev_geography == `group'"
-                if "`split'" == "quality" local condition "rev_quality == 1 - `group'"
+                if "`split'" == "geography" local condition "group_geography == `group'"
+                if "`split'" == "quality" local condition "group_quality == 1 - `group'"
                 if "`split'" == "joint" {
                     local quality = 1 - mod(`cell' - 1, 2)
                     local geography = floor((`cell' - 1) / 2)
-                    local condition "rev_quality == `quality' & rev_geography == `geography'"
+                    local condition "group_quality == `quality' & group_geography == `geography'"
                 }
                 display as text "CERT HETEROGENEITY: level, 5 years, `split', cell `cell'"
-                revision_fit main_citrec_post if `condition', covs(main_citrec_pre i.comp)
-                revision_record `results' main_citrec level `split' `cell' 5 2
+                estimate_rd main_citrec_post if `condition', covs(main_citrec_pre i.comp)
+                record_rd_estimate `results' main_citrec level `split' `cell' 5 2
             }
         }
     }

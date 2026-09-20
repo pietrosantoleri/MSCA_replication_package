@@ -58,9 +58,9 @@ do scripts/03_table1_mobility.do
 do scripts/04_table2_research.do
 do scripts/05_figures2_3_heterogeneity.do
 
-// Export tables with the submitted titles, headings and notes
+// Export tables with the manuscript titles, headings and notes
 *=============================================================================*
-do scripts/06_export_submitted_tables.do
+do scripts/06_export_tables.do
 
 // Check that all main-text outputs were produced
 *=============================================================================*

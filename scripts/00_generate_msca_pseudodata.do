@@ -39,7 +39,7 @@ global TARGET_PUBPRE   11.06
 global TARGET_JIFPRE   20.04
 global TARGET_COAPRE   27.26
 
-* Main public effect targets (used as broad reference points, not exact goals)
+* Effect parameters calibrated approximately to published estimates
 global TARGET_MOB_MEAN  0.63
 global TARGET_MOB_RD    0.327
 global TARGET_HOST_MEAN 0.50
@@ -56,7 +56,7 @@ global TARGET_COA_RD    3.040
 global FUND_SLOPE_L     0.45
 global FUND_SLOPE_R     0.25
 
-* Structural outcome parameters. These are intentionally rounded / approximate.
+* Rounded structural outcome parameters.
 global TAU_MOB          0.33
 global TAU_HOST         0.41
 global TAU_PUB          2.00
@@ -370,7 +370,7 @@ replace distance_km = exp(ln(2500) - 0.5*0.55^2 + 0.55*rnormal()) ///
     if mobility_direction == 4
 replace distance_km = min(distance_km,20000)
 
-* Same nationality as host: action-specific public-style rates.
+* Same nationality as host: rates calibrated to published action-level aggregates.
 gen double _p_same_nat = .
 replace _p_same_nat = 0.09 if action == 1
 replace _p_same_nat = 0.10 if action == 2
@@ -500,12 +500,12 @@ drop _at_zero _zero_comp
 * 8. GENERATE TWO-SIDED NONCOMPLIANCE / EVENTUAL FELLOWSHIP RECEIPT
 ********************************************************************************
 
-* Fix one latent uniform draw. We tune probability parameters, never the random seed.
+* Hold the simulated uniform variates fixed while solving for probability parameters.
 gen double u_fund = runiform()
 gen double p_fund = .
 gen byte treated = .
 
-* Tune the baseline probability so the overall realized funded share is ~22% while
+* Solve for the baseline probability so the overall realized funded share is ~22% while
 * imposing a TARGET_FS difference between the left and right probabilities at x=0.
 local lo = 0.10
 local hi = 0.69
@@ -709,22 +709,22 @@ gen double mu_coa5_0 = exp( ///
     + 0.25*field_net ///
     + 0.08*comp_re )
 
-* Preserve the legacy RNG path for every outcome generated below this block.
-* First consume the original coauthor draws and record the resulting state.
-local rng_before_coauthors "`c(rngstate)'"
-gen double _lambda_coa5_legacy = mu_coa5_0 * rgamma(1.5,1/1.5)
-gen int coauthors5_0_legacy = rpoisson(_lambda_coa5_legacy)
-local rng_after_coauthors "`c(rngstate)'"
+* Advance the primary RNG stream through the coauthor block and save its downstream state.
+* Generate and discard the primary-stream coauthor draws before recording the downstream state.
+local rng_coauthor_start "`c(rngstate)'"
+gen double _lambda_coa5_stream = mu_coa5_0 * rgamma(1.5,1/1.5)
+gen int _coauthors5_stream = rpoisson(_lambda_coa5_stream)
+local rng_downstream_start "`c(rngstate)'"
 
-* Generate revised coauthor counts from an isolated, reproducible stream.
-set rngstate `rng_before_coauthors'
+* Generate coauthor counts from a dedicated reproducible stream.
+set rngstate `rng_coauthor_start'
 gen double _lambda_coa5 = mu_coa5_0 * rgamma(0.50,1/0.50)
 gen int coauthors5_0 = rpoisson(_lambda_coa5)
 
-* Resume the legacy stream before citations, ten-year outcomes, certification,
+* Restore the primary stream before citations, ten-year outcomes, certification,
 * and missingness are generated.
-set rngstate `rng_after_coauthors'
-drop _lambda_coa5_legacy coauthors5_0_legacy
+set rngstate `rng_downstream_start'
+drop _lambda_coa5_stream _coauthors5_stream
 
 gen double tau_coa_i = $TAU_COA ///
     + 12.0*(extra_eu - scalar(M_EXTRA)) ///
@@ -837,11 +837,11 @@ drop cert_cites5_0
 
 
 ********************************************************************************
-* 13. ARTIFICIAL MISSINGNESS NEEDED BY THE REPLICATION CODE
+* 13. SYNTHETIC MISSINGNESS
 ********************************************************************************
 
-* 39 observations are removed from many matched bibliometric outcomes in the paper's
-* preferred sample. Reproduce the aggregate count only; identities are random.
+* Match the reported aggregate bibliometric sample size by marking 39
+* synthetic records as missing at random.
 
 gen double _miss_bib_u = runiform()
 sort _miss_bib_u
@@ -896,11 +896,10 @@ drop _miss_bib_u _miss_rank_u _miss_geo_u _miss_status_u _miss_same_u
 
 
 ********************************************************************************
-* 14. CLEAN INTERNAL VARIABLES AND ADD ANALYSIS ALIASES
+* 14. FINALIZE THE EXPORTED DATASET
 ********************************************************************************
 
-* Keep the latent researcher factors if useful for transparency; drop variables that expose
-* potential outcomes / internal simulation mechanics.
+* Drop latent factors, potential outcomes, and intermediate simulation variables.
 drop u_fund p_fund ///
      tau_mob_i tau_host_i ///
      tau_pub_i tau_jif_i tau_fwci_i tau_coa_i tau_cert_i ///
@@ -911,7 +910,7 @@ drop u_fund p_fund ///
      rank_missing geo_missing status_missing samenat_missing ///
      bibliometric_missing
 
-* Optional aliases: change these names to match the actual replication code.
+* Create descriptive aliases for the exported synthetic dataset.
 clonevar score_centered       = centered_score
 clonevar grant_received       = treated
 clonevar initial_offer        = mainlist

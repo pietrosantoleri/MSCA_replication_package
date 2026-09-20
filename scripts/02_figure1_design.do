@@ -19,7 +19,7 @@ label var main_pre "Pubs (pre)"
 label var d_pubs_dest_pre "Aff. in host country (pre)"
 local score margin2
 local cutoff 0
-* Vendored rdplot builds e(eq_l)/e(eq_r) using the original global c.
+* Vendored rdplot builds e(eq_l)/e(eq_r) using the global cutoff.
 global c 0
 local balance_vars sex age prof nat_eu27 globalrank gdppc d_pubs_dest_pre main_pre main_jif_pre
 count
@@ -28,7 +28,7 @@ summarize treat margin2 `balance_vars'
 *=============================================================================*
 * Figure 1, panel a: Treatment compliance
 *=============================================================================*
-set seed 3455  // Original competition-sampling seed.
+set seed 3455  // Fixed competition-sampling seed.
 preserve
 bysort comp: keep if _n == 1  // One observation per competition.
 sample 15, count

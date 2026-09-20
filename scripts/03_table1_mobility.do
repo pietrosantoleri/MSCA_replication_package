@@ -22,7 +22,7 @@ program define add_estimates
     estadd scalar Mean = r(mean)
 end
 
-* Store the estimates displayed in the submitted table.
+* Store the estimates displayed in the manuscript table.
 tempname results
 postfile `results' byte table str32 outcome double (tau tau_bc se_cl se_rb p_rb Mean h_l h_r N N_l N_r) ///
     using "output/source_data/table_estimates.dta", replace
@@ -63,5 +63,5 @@ post `results' (1) ("d_pubs_outside_both_5") ///
         (e(pv_rb)) (e(Mean)) (e(h_l)) (e(h_r)) (e(N)) ///
         (e(N_h_l)) (e(N_h_r))
 
-* Close the estimate file; script 06 applies the submitted table layout.
+* Close the estimate file; script 06 applies the manuscript table layout.
 postclose `results'

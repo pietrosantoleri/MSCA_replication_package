@@ -7,7 +7,7 @@
 *=============================================================================*
 
 *=============================================================================*
-* Prepare synthetic inputs with the original analysis variable names.
+* Prepare synthetic inputs with the analysis variable names.
 * All additions below are artificial and use a separate fixed random seed.
 *=============================================================================*
 version 19
@@ -45,15 +45,15 @@ gen byte was_in_destination = runiform() < .07 if !missing(mobility_pre)
 gen byte mob_linkedin_pre = d_pubs_dest_pre
 replace mob_linkedin_pre = 1 if d_pubs_dest_pre == 0 & was_in_destination == 1
 
-* Synthetic pre-period third-country affiliation (absent from the template).
+* Synthetic pre-period third-country affiliation.
 * This supplies the application-level input to Table 1, column 4.
 * Its probability is smooth, contains no treatment term, and is not calibrated
-* to confidential moments. The template's post-period indicator is retained.
+* to restricted-data moments. The post-period indicator is retained.
 gen byte d_pubs_outside_both_pre = runiform() < ///
     invlogit(-1.2 + .25*extra_eu + .15*ln(1+pubs_pre)) if !missing(pubs_pre)
 
-* Assign public country codes to wholly artificial country categories.
-* These codes allow the original EU28 membership loop to run unchanged.
+* Assign public country codes to artificial country categories.
+* These codes support the EU28 subgroup definitions.
 local eu_codes "AT BE BG HR CY CZ DK EE FI FR DE EL HU IE IT"
 local other_codes "US CA AU CN IN JP BR MX NZ ZA KR SG CL AR CH"
 gen str2 researchercountryorigin = ""
@@ -159,7 +159,7 @@ sort prop_id
 compress
 save "data/pseudo/msca_analysis_pseudo.dta", replace
 
-* Machine-readable data dictionary, generated without reading real microdata.
+* Export a machine-readable data dictionary.
 tempname dict
 file open `dict' using "documentation/analysis_variables.tsv", write text replace
 file write `dict' "variable" _tab "storage_type" _tab "label" _n
