@@ -40,4 +40,4 @@ The original empirical data are confidential. Requests for independent access sh
 
 ## Citation and licence
 
-Use [CITATION.cff](CITATION.cff) to cite this software package. The associated manuscript is an unpublished submission. Project code, synthetic data and generated synthetic outputs are provided under the [MIT licence](LICENSE). Bundled third-party commands retain their own licences and notices, listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Use [CITATION.cff](CITATION.cff) to cite this software package. The associated manuscript is an unpublished submission. Project code, synthetic data and generated synthetic outputs are provided under the [MIT licence](LICENSE).
