@@ -161,7 +161,7 @@ foreach split in geography quality joint {
         local row2 "Extra-EU"
     }
     local plots
-    foreach stem in main main_jif d_pubs_dest coauths_count {
+    foreach stem in d_pubs_dest main main_jif coauths_count {
         local title "Publications"
         if "`stem'" == "main_jif" local title "Average JIF"
         if "`stem'" == "d_pubs_dest" local title "Mobility"
